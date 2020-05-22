@@ -1,7 +1,7 @@
 using Test
-using Revise
-using PolynomialBasis
 import DynamicPolynomials: @polyvar
+# using Revise
+using PolynomialBasis
 
 function allequal(v1,v2)
     return all(v1 .≈ v2)
