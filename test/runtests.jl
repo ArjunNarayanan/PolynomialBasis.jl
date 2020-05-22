@@ -1,6 +1,5 @@
-using PolynomialBasis
-using Test
+using SafeTestsets
 
-@testset "PolynomialBasis.jl" begin
-    # Write your own tests here.
+@safetestset "Test Lagrange Polynomials" begin
+    include("test_lagrange_polynomials.jl")
 end
