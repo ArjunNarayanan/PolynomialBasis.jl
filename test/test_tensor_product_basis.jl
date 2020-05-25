@@ -1,5 +1,5 @@
 using Test
-using Revise
+# using Revise
 using PolynomialBasis
 
 PB = PolynomialBasis
@@ -95,3 +95,95 @@ tpb = PB.TensorProductBasis(1,2,stop=0.0)
 @test allequal(PB.gradient(tpb,0.0),[1.0,-4,3])
 @test_throws AssertionError PB.gradient(tpb,[1.0,2.0])
 @test allequal(PB.gradient(tpb,[0.0]),[1.0,-4,3])
+
+function test_basis_on_points(basis::PB.TensorProductBasis{2,T,N}) where {T,N}
+    flag = true
+    for i in 1:N
+        vals = zeros(N)
+        vals[i] = 1.0
+        p = basis.points[:,i]
+        flag = flag && basis(p[1],p[2]) ≈ vals
+        flag = flag && basis(p) ≈ vals
+    end
+    return flag
+end
+
+basis = PB.LagrangePolynomialBasis(0)
+tp2 = PB.TensorProductBasis(2,basis)
+@test allequal(tp2.points,[0.0,0.0])
+@test test_basis_on_points(tp2)
+@test_throws MethodError PB.gradient(tp2,1.5,1.0,2.0)
+@test allequal(PB.gradient(tp2,1,0.0,0.0),[0.0])
+@test allequal(PB.gradient(tp2,2,0.0,0.0),[0.0])
+@test allequal(PB.gradient(tp2,2,[0.0,0.0]),[0.0])
+@test allequal(PB.gradient(tp2,0.0,0.0),[0.0 0.0])
+@test allequal(PB.gradient(tp2,[0.0,0.0]),[0.0 0.0])
+@test_throws AssertionError PB.gradient(tp2,[0.0])
+@test_throws AssertionError PB.gradient(tp2,[0.0,0.0,0.0])
+
+
+v1 = [1.0,0.0,0.0]
+v2 = [0.0,1.0,0.0]
+v3 = [0.0,0.0,1.0]
+d1 = [-1.5,2.0,-0.5]
+d2 = [-0.5,0.0,0.5]
+d3 = [0.5,-2.0,1.5]
+tp2 = PB.TensorProductBasis(2,2)
+@test_throws AssertionError PB.gradient(tp2,0,-1,1)
+@test_throws AssertionError PB.gradient(tp2,3,-1,1)
+@test allequal(PB.gradient(tp2, 1, -1.0, -1.0), kron(d1,v1))
+@test allequal(PB.gradient(tp2, 1, -1.0, +0.0), kron(d1,v2))
+@test allequal(PB.gradient(tp2, 1, -1.0, +1.0), kron(d1,v3))
+@test allequal(PB.gradient(tp2, 1, +0.0, -1.0), kron(d2,v1))
+@test allequal(PB.gradient(tp2, 1, +0.0, +0.0), kron(d2,v2))
+@test allequal(PB.gradient(tp2, 1, +0.0, +1.0), kron(d2,v3))
+@test allequal(PB.gradient(tp2, 1, +1.0, -1.0), kron(d3,v1))
+@test allequal(PB.gradient(tp2, 1, +1.0, +0.0), kron(d3,v2))
+@test allequal(PB.gradient(tp2, 1, +1.0, +1.0), kron(d3,v3))
+
+@test allequal(PB.gradient(tp2, 1, [+1.0, +1.0]), kron(d3,v3))
+
+@test allequal(PB.gradient(tp2, 2, -1.0, -1.0), kron(v1,d1))
+@test allequal(PB.gradient(tp2, 2, -1.0, +0.0), kron(v1,d2))
+@test allequal(PB.gradient(tp2, 2, -1.0, +1.0), kron(v1,d3))
+@test allequal(PB.gradient(tp2, 2, +0.0, -1.0), kron(v2,d1))
+@test allequal(PB.gradient(tp2, 2, +0.0, +0.0), kron(v2,d2))
+@test allequal(PB.gradient(tp2, 2, +0.0, +1.0), kron(v2,d3))
+@test allequal(PB.gradient(tp2, 2, +1.0, -1.0), kron(v3,d1))
+@test allequal(PB.gradient(tp2, 2, +1.0, +0.0), kron(v3,d2))
+@test allequal(PB.gradient(tp2, 2, +1.0, +1.0), kron(v3,d3))
+
+@test allequal(PB.gradient(tp2, 2, [+1.0, +1.0]), kron(v3,d3))
+
+@test allequal(PB.gradient(tp2,1.0,1.0),hcat(kron(d3,v3),kron(v3,d3)))
+@test_throws AssertionError PB.gradient(tp2,[1.0,1.0,1.0])
+@test allequal(PB.gradient(tp2,[1.0,1.0]),hcat(kron(d3,v3),kron(v3,d3)))
+
+function test_basis_on_points(basis::PB.TensorProductBasis{3,T,N}) where {T,N}
+    flag = true
+    for i in 1:N
+        vals = zeros(N)
+        vals[i] = 1.0
+        p = basis.points[:,i]
+        flag = flag && basis(p[1],p[2],p[3]) ≈ vals
+        flag = flag && basis(p) ≈ vals
+    end
+    return flag
+end
+
+tp3 = PB.TensorProductBasis(3,2)
+@test test_basis_on_points(tp3)
+
+@test_throws AssertionError PB.gradient(tp3,0,-1.0,-1.0,-1.0)
+@test_throws AssertionError PB.gradient(tp3,4,-1.0,-1.0,-1.0)
+@test allequal(PB.gradient(tp3,1,-1.0,-1.0,-1.0),kron(d1,v1,v1))
+@test allequal(PB.gradient(tp3,2,-1.0,0.0,-1.0),kron(v1,d2,v1))
+@test allequal(PB.gradient(tp3,3,-1.0,0.0,+1.0),kron(v1,v2,d3))
+
+@test_throws AssertionError PB.gradient(tp3,1,[1.0])
+@test_throws AssertionError PB.gradient(tp3,1,[1.0,1.0])
+@test_throws AssertionError PB.gradient(tp3,1,[1.0,1.0,1.0,1.0])
+
+@test allequal(PB.gradient(tp3,3,[-1.0,-1.0,-1.0]),kron(v1,v1,d1))
+
+@test allequal(PB.gradient(tp3,1.0,-1.0,0.0),hcat(kron(d3,v1,v2),kron(v3,d1,v2),kron(v3,v1,d2)))

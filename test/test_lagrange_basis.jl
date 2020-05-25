@@ -1,6 +1,5 @@
 using Test
 import DynamicPolynomials: @polyvar
-# import StaticArrays
 # using Revise
 using PolynomialBasis
 
@@ -30,6 +29,7 @@ funcs = [x^2,1.0+0.0x,-x^2]
 @test_throws AssertionError PB.LagrangePolynomialBasis(funcs,[-1.0,0.0,1.0])
 
 @test_throws AssertionError PB.LagrangePolynomialBasis(-1)
+@test_throws MethodError PB.LagrangePolynomialBasis(2.5)
 @test_throws AssertionError PB.LagrangePolynomialBasis(1,start=2)
 @test_throws AssertionError PB.LagrangePolynomialBasis(2,stop=-2.0)
 

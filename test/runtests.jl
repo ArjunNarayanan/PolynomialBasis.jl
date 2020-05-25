@@ -7,3 +7,7 @@ end
 @safetestset "Test Lagrange Basis" begin
     include("test_lagrange_basis.jl")
 end
+
+@safetestset "Test Tensor Product Basis" begin
+    include("test_tensor_product_basis.jl")
+end
