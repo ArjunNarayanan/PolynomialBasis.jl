@@ -32,13 +32,13 @@ struct LagrangePolynomialBasis{NF} <: AbstractBasis{1,NF}
 end
 
 
-function LagrangePolynomialBasis(order::Z;start::R = -1.0, stop::R = 1.0) where {Z<:Integer,R<:Real}
+function LagrangePolynomialBasis(order::Z;start = -1.0, stop = 1.0) where {Z<:Integer}
     @assert start < stop
     @assert order >= 0
 
     DP.@polyvar x
     NF = order+1
-    points = NF == 1 ? [0.0] : range(start,stop=stop,length=NF)
+    points = NF == 1 ? [0.5*(start+stop)] : range(start,stop=stop,length=NF)
     funcs = lagrange_polynomials(x,points)
     return LagrangePolynomialBasis(funcs,points)
 end
@@ -47,7 +47,15 @@ function (B::LagrangePolynomialBasis)(x)
     return SP.evaluate(B.funcs, @SVector [x])
 end
 
+function number_of_basis_functions(basis::T) where {T<:AbstractBasis{dim,NF}} where {dim,NF}
+    return NF
+end
+
 function derivative(B::LagrangePolynomialBasis{NF},x) where {NF}
     vals = SP.jacobian(B.funcs,@SVector [x])
     return SVector{NF}(vals)
+end
+
+function gradient(B::LagrangePolynomialBasis,x)
+    return derivative(B,x)
 end
