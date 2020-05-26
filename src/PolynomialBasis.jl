@@ -10,5 +10,6 @@ SP = StaticPolynomials
 include("lagrange_polynomials.jl")
 include("lagrange_basis.jl")
 include("tensor_product_basis.jl")
+include("interpolation.jl")
 
 end # module
