@@ -187,3 +187,6 @@ tp3 = PB.TensorProductBasis(3,2)
 @test allequal(PB.gradient(tp3,3,[-1.0,-1.0,-1.0]),kron(v1,v1,d1))
 
 @test allequal(PB.gradient(tp3,1.0,-1.0,0.0),hcat(kron(d3,v1,v2),kron(v3,d1,v2),kron(v3,v1,d2)))
+@test_throws AssertionError PB.gradient(tp3,[1.0])
+@test_throws AssertionError PB.gradient(tp3,[1.0,2.0,1.0,3.0])
+@test allequal(PB.gradient(tp3,[1.0,-1.0,0.0]),hcat(kron(d3,v1,v2),kron(v3,d1,v2),kron(v3,v1,d2)))
