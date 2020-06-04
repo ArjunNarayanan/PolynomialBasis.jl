@@ -26,7 +26,7 @@ function (B::TensorProductBasis{1})(x::V) where {V<:AbstractVector}
     return B(x[1])
 end
 
-function (B::TensorProductBasis{2})(x::T,y::T) where {T<:Number}
+function (B::TensorProductBasis{2})(x,y)
     return kron(B.basis(x),B.basis(y))
 end
 
@@ -35,7 +35,7 @@ function (B::TensorProductBasis{2})(x::V) where {V<:AbstractVector}
     return B(x[1],x[2])
 end
 
-function (B::TensorProductBasis{3})(x::T,y::T,z::T) where {T<:Number}
+function (B::TensorProductBasis{3})(x,y,z)
     return kron(B.basis(x),B.basis(y),B.basis(z))
 end
 
