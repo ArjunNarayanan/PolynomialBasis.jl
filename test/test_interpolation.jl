@@ -1,4 +1,5 @@
-using Test, StaticArrays
+using Test
+using StaticArrays
 # using Revise
 using PolynomialBasis
 
@@ -62,8 +63,8 @@ f(x) = 3x^2 + 2x - 5
 df(x) = 6x + 2
 coeffs = f.(P.basis.points)
 PB.update!(P, coeffs)
-@test PB.gradient(P, -1.0) ≈ df(-1.0)
-@test PB.gradient(P, 0.19) ≈ df(0.19)
+@test all(PB.gradient(P, [-1.0]) .≈ [df(-1.0)])
+@test all(PB.gradient(P, [0.19]) .≈ [df(0.19)])
 
 P = PB.InterpolatingPolynomial(1,2,2)
 f(x,y) = 3x^2*y + 2y^2 + 2x*y
@@ -71,20 +72,7 @@ dfx(x,y) = 6*x*y + 2*y
 dfy(x,y) = 3x^2 + 4y + 2x
 coeffs = [f((P.basis.points[:,i])...) for i = 1:9]
 PB.update!(P, coeffs)
-@test allequal(PB.gradient(P, 0.1, 0.2), [dfx(0.1, 0.2) dfy(0.1,0.2)])
-@test allequal(PB.gradient(P, 1, 0.7, -0.3), dfx(0.7, -0.3))
+@test allequal(PB.gradient(P, [0.1, 0.2]), [dfx(0.1, 0.2) dfy(0.1,0.2)])
+@test allequal(PB.gradient(P, 1, [0.7, -0.3]), dfx(0.7, -0.3))
 @test allequal(PB.gradient(P, 2, [-0.5, 0.75]), dfy(-0.5, 0.75))
 @test allequal(PB.gradient(P, [0.1, 0.45]), [dfx(0.1, 0.45) dfy(0.1, 0.45)])
-
-P = PB.InterpolatingPolynomial(2,2,2)
-f(x,y) = [7x^2 + 2*x*y^2 + 3*x,
-          -6y^2 + 12*x^2*y + 10*y]
-dfx(x,y) = [14x + 2y^2 + 3,
-            24x*y]
-dfy(x,y) = [4x*y,
-            -12y + 12x^2 + 10]
-coeffs = hcat([f(P.basis.points[:,i]...) for i in 1:9]...)
-PB.update!(P, coeffs)
-@test allequal(PB.gradient(P, 0.1, 0.5), hcat(dfx(0.1,0.5), dfy(0.1,0.5)))
-@test allequal(PB.gradient(P, [0.9, -0.7]), hcat(dfx(0.9, -0.7), dfy(0.9, -0.7)))
-@test allequal(vec(PB.gradient(P, 1, 0.7, 0.3)), dfx(0.7, 0.3))

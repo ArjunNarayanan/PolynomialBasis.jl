@@ -44,7 +44,7 @@ function (B::TensorProductBasis{3})(x::V) where {V<:AbstractVector}
     return B(x[1],x[2],x[3])
 end
 
-function gradient(B::TensorProductBasis{1},x::T) where {T<:Number}
+function gradient(B::TensorProductBasis{1},x)
     return derivative(B.basis,x)
 end
 
