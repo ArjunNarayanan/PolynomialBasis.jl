@@ -46,16 +46,54 @@ function update!(P::InterpolatingPolynomial, coeffs)
     P.coeffs[:] = coeffs[:]
 end
 
-function (P::InterpolatingPolynomial{1})(x...)
-    return ((P.coeffs)*(P.basis(x...)))[1]
+function (P::InterpolatingPolynomial{1,NF,B,T})(
+    x,
+    y,
+) where {B<:AbstractBasis{2},NF,T}
+    return ((P.coeffs)*(P.basis(x, y)))[1]
 end
 
-function (P::InterpolatingPolynomial)(x...)
-    return ((P.coeffs) * (P.basis(x...)))
+function (P::InterpolatingPolynomial{1,NF,B,T})(
+    x::V,
+) where {B<:AbstractBasis{2},NF,T} where {V<:AbstractVector}
+    @assert length(x) == 2
+    return ((P.coeffs)*(P.basis(x[1], x[2])))[1]
 end
 
-function gradient(P::InterpolatingPolynomial{1}, x...)
-    return ((P.coeffs) * (gradient(P.basis, x...)))
+function (P::InterpolatingPolynomial{N,NF,B,T})(
+    x,
+    y,
+) where {B<:AbstractBasis{2},N,NF,T}
+    return ((P.coeffs) * (P.basis(x,y)))
+end
+
+function (P::InterpolatingPolynomial{N,NF,B,T})(
+    x::V,
+) where {B<:AbstractBasis{2},N,NF,T} where {V<:AbstractVector}
+    @assert length(x) == 2
+    return ((P.coeffs) * (P.basis(x[1],x[2])))
+end
+
+function gradient(
+    P::InterpolatingPolynomial{1,NF,B,T},
+    x,
+) where {B<:AbstractBasis{1},NF,T}
+    return ((P.coeffs) * (gradient(P.basis, x)))
+end
+
+function gradient(
+    P::InterpolatingPolynomial{1,NF,B,T},
+    x,
+    y,
+) where {B<:AbstractBasis{2},NF,T}
+    return ((P.coeffs) * (gradient(P.basis, x, y)))
+end
+
+function gradient(
+    P::InterpolatingPolynomial{1,NF,B,T},
+    x::V,
+) where {B<:AbstractBasis{2},NF,T} where {V<:AbstractVector}
+    return ((P.coeffs) * (gradient(P.basis, x)))
 end
 
 # function gradient(

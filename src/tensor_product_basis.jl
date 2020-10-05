@@ -72,6 +72,17 @@ function gradient(B::TensorProductBasis{2},x,y)
     return hcat(col1,col2)
 end
 
+function gradient(B::TensorProductBasis{2},dir::Z,x::V) where {Z<:Integer} where {V<:AbstractVector}
+    @assert length(x) == 2
+    @assert 1 <= dir <= 2
+    return gradient(B,dir,x[1],x[2])
+end
+
+function gradient(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
+    @assert length(x) == 2
+    return gradient(B,x[1],x[2])
+end
+
 function gradient(B::TensorProductBasis{3},dir::Z,x,y,z) where {Z<:Integer}
     @assert 1 <= dir <= 3
     if dir == 1
@@ -102,17 +113,6 @@ function gradient(B::TensorProductBasis{3},x,y,z)
     dNz = derivative(B.basis,z)
 
     return hcat(kron(dNx,Ny,Nz),kron(Nx,dNy,Nz),kron(Nx,Ny,dNz))
-end
-
-function gradient(B::TensorProductBasis{2},dir::Z,x::V) where {Z<:Integer} where {V<:AbstractVector}
-    @assert length(x) == 2
-    @assert 1 <= dir <= 2
-    return gradient(B,dir,x[1],x[2])
-end
-
-function gradient(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
-    @assert length(x) == 2
-    return gradient(B,x[1],x[2])
 end
 
 function gradient(B::TensorProductBasis{3},dir::Z,x::V) where {Z<:Integer} where {V<:AbstractVector}

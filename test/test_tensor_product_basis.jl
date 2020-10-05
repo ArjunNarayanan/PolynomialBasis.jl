@@ -103,7 +103,7 @@ function test_basis_on_points(basis::PB.TensorProductBasis{2,T,N}) where {T,N}
         vals[i] = 1.0
         p = basis.points[:,i]
         flag = flag && basis(p[1],p[2]) ≈ vals
-        flag = flag && basis(p) ≈ vals
+        flag = flag && basis(p...) ≈ vals
     end
     return flag
 end
