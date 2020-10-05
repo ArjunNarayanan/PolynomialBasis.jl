@@ -54,14 +54,14 @@ function (P::InterpolatingPolynomial)(x...)
     return ((P.coeffs) * (P.basis(x...)))
 end
 
-function gradient(P::InterpolatingPolynomial{1}, x::V) where {V<:AbstractVector}
-    return ((P.coeffs) * (gradient(P.basis, x)))
+function gradient(P::InterpolatingPolynomial{1}, x...)
+    return ((P.coeffs) * (gradient(P.basis, x...)))
 end
 
-function gradient(
-    P::InterpolatingPolynomial{1},
-    dir::Z,
-    x::V,
-) where {Z<:Integer,V<:AbstractVector}
-    return ((P.coeffs)*(gradient(P.basis, dir, x)))[1]
-end
+# function gradient(
+#     P::InterpolatingPolynomial{1},
+#     dir::Z,
+#     x,
+# ) where {Z<:Integer}
+#     return ((P.coeffs)*(gradient(P.basis, dir, x)))[1]
+# end
