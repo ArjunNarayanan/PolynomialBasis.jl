@@ -17,6 +17,20 @@ function TensorProductBasis(dim,order; start = -1.0, stop = 1.0)
     return TensorProductBasis(dim,basis_1d)
 end
 
+function Base.show(io::IO, basis::TensorProductBasis{dim,T,NF}) where {dim,T,NF}
+    p = order(basis)
+    str = "TensorProductBasis\n\tDimension  : $dim\n\tOrder      : $p\n\tNum. Funcs.: $NF"
+    print(io,str)
+end
+
+function order(basis::TensorProductBasis)
+    return order(basis.basis)
+end
+
+function dimension(basis::TensorProductBasis{dim}) where {dim}
+    return dim
+end
+
 function (B::TensorProductBasis{1})(x::T) where {T<:Number}
     return B.basis(x)
 end

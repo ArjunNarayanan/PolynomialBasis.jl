@@ -31,6 +31,14 @@ struct LagrangePolynomialBasis{NF} <: AbstractBasis{1,NF}
     end
 end
 
+function Base.show(io::IO,basis::LagrangePolynomialBasis{NF}) where {NF}
+    p = order(basis)
+    print(io, "1-D LagrangePolynomialBasis\n\tOrder: $p")
+end
+
+function order(basis::LagrangePolynomialBasis{NF}) where {NF}
+    return NF-1
+end
 
 function LagrangePolynomialBasis(order::Z;start = -1.0, stop = 1.0) where {Z<:Integer}
     @assert start < stop
