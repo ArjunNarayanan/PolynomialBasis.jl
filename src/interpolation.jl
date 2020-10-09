@@ -49,6 +49,10 @@ function Base.show(io::IO, poly::InterpolatingPolynomial{N,NF,B,T}) where {N,NF,
     print(io,str)
 end
 
+function dimension(poly::InterpolatingPolynomial)
+    return dimension(poly.basis)
+end
+
 function update!(P::InterpolatingPolynomial, coeffs)
     P.coeffs[:] = coeffs[:]
 end
@@ -102,11 +106,3 @@ function gradient(
 ) where {B<:AbstractBasis{2},NF,T} where {V<:AbstractVector}
     return ((P.coeffs) * (gradient(P.basis, x)))
 end
-
-# function gradient(
-#     P::InterpolatingPolynomial{1},
-#     dir::Z,
-#     x,
-# ) where {Z<:Integer}
-#     return ((P.coeffs)*(gradient(P.basis, dir, x)))[1]
-# end
