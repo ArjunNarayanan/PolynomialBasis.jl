@@ -67,3 +67,9 @@ end
 function gradient(B::LagrangePolynomialBasis,x)
     return derivative(B,x)
 end
+
+function hessian(B::LagrangePolynomialBasis{NF},x) where {NF}
+    h = zeros(NF,1,1)
+    SP.hessian!(h,B.funcs,[x])
+    return h[:,1,1]
+end
