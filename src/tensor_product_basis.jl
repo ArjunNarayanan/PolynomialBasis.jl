@@ -140,6 +140,39 @@ function gradient(B::TensorProductBasis{3},x::V) where {V<:AbstractVector}
     return gradient(B,x[1],x[2],x[3])
 end
 
+
+
+function hessian(B::TensorProductBasis{1},x)
+    return hessian(B.basis,x)
+end
+
+function hessian(B::TensorProductBasis{1},x::V) where {V<:AbstractVector}
+    @assert length(x) == 1
+    return hessian(B,x[1])
+end
+
+function hessian(B::TensorProductBasis{2},x,y)
+
+    d2Nx = hessian(B.basis,x)
+    d1Nx = derivative(B.basis,x)
+    d0Nx = B.basis(x)
+
+    d2Ny = hessian(B.basis,y)
+    d1Ny = derivative(B.basis,y)
+    d0Ny = B.basis(y)
+
+    Nxx = kron(d2Nx,d0Ny)
+    Nxy = kron(d1Nx,d1Ny)
+    Nyy = kron(d0Nx,d2Ny)
+
+    return hcat(Nxx,Nxy,Nyy)
+end
+
+function hessian(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
+    @assert length(x) == 2
+    return hessian(B,x[1],x[2])
+end
+
 function number_of_1d_points(p::V) where {V<:AbstractVector}
     @assert length(p) == 1
     return 1

@@ -8,6 +8,12 @@ function allequal(v1,v2)
     return all(v1 .≈ v2)
 end
 
+function allequal(v1,v2,tol)
+    np = length(v1)
+    f = length(v2) == np
+    return f && all([isapprox(v1[i],v2[i],atol=tol) for i = 1:np])
+end
+
 
 p = [-1.0 1.0]
 @test_throws AssertionError PB.tensor_product_points(0,p)
@@ -190,3 +196,25 @@ tp3 = PB.TensorProductBasis(3,2)
 @test_throws AssertionError PB.gradient(tp3,[1.0])
 @test_throws AssertionError PB.gradient(tp3,[1.0,2.0,1.0,3.0])
 @test allequal(PB.gradient(tp3,[1.0,-1.0,0.0]),hcat(kron(d3,v1,v2),kron(v3,d1,v2),kron(v3,v1,d2)))
+
+
+tp1 = PB.TensorProductBasis(1,2)
+@test allequal(PB.hessian(tp1,-1),[1,-2,1])
+@test allequal(PB.hessian(tp1,0),[1,-2,1])
+@test allequal(PB.hessian(tp1,1),[1,-2,1])
+@test allequal(PB.hessian(tp1,[-1]),[1,-2,1])
+@test allequal(PB.hessian(tp1,[0]),[1,-2,1])
+@test allequal(PB.hessian(tp1,[1]),[1,-2,1])
+
+
+tp2 = PB.TensorProductBasis(2,2)
+f(x) = x[1]^2 + 2x[1]*x[2] + x[2]^2
+coeffs = mapslices(f,Array(tp2.points),dims=1)
+@test all([allequal(coeffs*PB.hessian(tp2,tp2.points[:,i]),[2,2,2]) for i = 1:9])
+
+tp3 = PB.TensorProductBasis(2,3)
+f(x) = x[1]^3 + 2x[1]^2*x[2] + 18.0
+tp3h(x) = [6x[1]+4x[2],4x[1],0.0]
+coeffs = mapslices(f,Array(tp3.points),dims=1)
+p = tp3.points
+@test all([allequal(coeffs*PB.hessian(tp3,p[:,i]),tp3h(p[:,i]),1e3eps()) for i = 1:16])
