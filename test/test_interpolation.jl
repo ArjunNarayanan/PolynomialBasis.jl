@@ -1,6 +1,6 @@
 using Test
 using StaticArrays
-using Revise
+# using Revise
 using PolynomialBasis
 
 PB = PolynomialBasis
