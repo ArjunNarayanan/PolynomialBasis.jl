@@ -1,14 +1,14 @@
 import Base: ==
 
 
-abstract type AbstractBasis{dim,NF} end
+abstract type AbstractBasis{dim,NF,T} end
 
 
-struct LagrangePolynomialBasis{NF} <: AbstractBasis{1,NF}
+struct LagrangePolynomialBasis{NF,T} <: AbstractBasis{1,NF,T}
     funcs::SP.PolynomialSystem{NF,1}
-    points::SMatrix{1,NF}
+    points::Vector{T}
     function LagrangePolynomialBasis(funcs::Vector{DP.Polynomial{C,R}},
-        points::V) where {C,R<:Real,V<:AbstractVector}
+        points::Vector{T}) where {C,R,T}
 
         NF = length(funcs)
         order = NF - 1
@@ -26,17 +26,20 @@ struct LagrangePolynomialBasis{NF} <: AbstractBasis{1,NF}
             @assert ord == order "Require all polynomials of same order"
         end
         polysystem = SP.PolynomialSystem(funcs)
-        static_points = SMatrix{1,NF}(points')
-        new{NF}(polysystem,static_points)
+        new{NF,T}(polysystem,points)
     end
 end
 
-function Base.show(io::IO,basis::LagrangePolynomialBasis{NF}) where {NF}
+function Base.show(io::IO,basis::LagrangePolynomialBasis{NF,T}) where {NF,T}
     p = order(basis)
     print(io, "1-D LagrangePolynomialBasis\n\tOrder: $p")
 end
 
-function order(basis::LagrangePolynomialBasis{NF}) where {NF}
+function dimension(basis::B) where {B<:AbstractBasis{D}} where {D}
+    return D
+end
+
+function order(basis::LagrangePolynomialBasis{NF,T}) where {NF,T}
     return NF-1
 end
 
@@ -46,29 +49,29 @@ function LagrangePolynomialBasis(order::Z;start = -1.0, stop = 1.0) where {Z<:In
 
     DP.@polyvar x
     NF = order+1
-    points = NF == 1 ? [0.5*(start+stop)] : range(start,stop=stop,length=NF)
+    points = NF == 1 ? [0.5*(start+stop)] : Array(range(start,stop=stop,length=NF))
     funcs = lagrange_polynomials(x,points)
     return LagrangePolynomialBasis(funcs,points)
 end
 
 function (B::LagrangePolynomialBasis)(x)
-    return SP.evaluate(B.funcs, @SVector [x])
+    return SP.evaluate(B.funcs,[x])
 end
 
 function number_of_basis_functions(basis::T) where {T<:AbstractBasis{dim,NF}} where {dim,NF}
     return NF
 end
 
-function derivative(B::LagrangePolynomialBasis{NF},x) where {NF}
-    vals = SP.jacobian(B.funcs,@SVector [x])
-    return SVector{NF}(vals)
+function derivative(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
+    vals = SP.jacobian(B.funcs,[x])
+    return vals
 end
 
-function gradient(B::LagrangePolynomialBasis,x)
+function gradient(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
     return derivative(B,x)
 end
 
-function hessian(B::LagrangePolynomialBasis{NF},x) where {NF}
+function hessian(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
     h = zeros(NF,1,1)
     SP.hessian!(h,B.funcs,[x])
     return h[:,1,1]

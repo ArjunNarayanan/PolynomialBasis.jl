@@ -1,14 +1,11 @@
-abstract type AbstractTensorProductBasis{dim,T,NF} <: AbstractBasis{dim,NF} end
-
-struct TensorProductBasis{dim,T,NF} <: AbstractTensorProductBasis{dim,T,NF}
-    basis::T
-    points::SMatrix{dim,NF}
-    function TensorProductBasis(dim::Z,B::T) where {Z<:Integer} where {T<:AbstractBasis{1}}
+struct TensorProductBasis{dim,B,NF,T} <: AbstractBasis{dim,NF,T}
+    basis::B
+    points::Matrix{T}
+    function TensorProductBasis(dim,basis1d::B) where {B<:AbstractBasis{1,N1D,T}} where {N1D,T}
         @assert 1 <= dim <= 3
-        N1D = number_of_basis_functions(B)
         NF = N1D^dim
-        points = tensor_product_points(dim,B.points)
-        new{dim,T,NF}(B,points)
+        points = tensor_product_points(dim,basis1d.points')
+        new{dim,B,NF,T}(basis1d,points)
     end
 end
 
@@ -17,7 +14,7 @@ function TensorProductBasis(dim,order; start = -1.0, stop = 1.0)
     return TensorProductBasis(dim,basis_1d)
 end
 
-function Base.show(io::IO, basis::TensorProductBasis{dim,T,NF}) where {dim,T,NF}
+function Base.show(io::IO, basis::TensorProductBasis{dim,B,NF,T}) where {dim,B,NF,T}
     p = order(basis)
     str = "TensorProductBasis\n\tDimension  : $dim\n\tOrder      : $p\n\tNum. Funcs.: $NF"
     print(io,str)
@@ -27,11 +24,7 @@ function order(basis::TensorProductBasis)
     return order(basis.basis)
 end
 
-function dimension(basis::TensorProductBasis{dim}) where {dim}
-    return dim
-end
-
-function (B::TensorProductBasis{1})(x::T) where {T<:Number}
+function (B::TensorProductBasis{1})(x)
     return B.basis(x)
 end
 
@@ -86,7 +79,7 @@ function gradient(B::TensorProductBasis{2},x,y)
     return hcat(col1,col2)
 end
 
-function gradient(B::TensorProductBasis{2},dir::Z,x::V) where {Z<:Integer} where {V<:AbstractVector}
+function gradient(B::TensorProductBasis{2},dir,x::V) where {V<:AbstractVector}
     @assert length(x) == 2
     @assert 1 <= dir <= 2
     return gradient(B,dir,x[1],x[2])
@@ -97,7 +90,7 @@ function gradient(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
     return gradient(B,x[1],x[2])
 end
 
-function gradient(B::TensorProductBasis{3},dir::Z,x,y,z) where {Z<:Integer}
+function gradient(B::TensorProductBasis{3},dir,x,y,z)
     @assert 1 <= dir <= 3
     if dir == 1
         dNx = derivative(B.basis,x)
@@ -129,7 +122,7 @@ function gradient(B::TensorProductBasis{3},x,y,z)
     return hcat(kron(dNx,Ny,Nz),kron(Nx,dNy,Nz),kron(Nx,Ny,dNz))
 end
 
-function gradient(B::TensorProductBasis{3},dir::Z,x::V) where {Z<:Integer} where {V<:AbstractVector}
+function gradient(B::TensorProductBasis{3},dir,x::V) where {V<:AbstractVector}
     @assert length(x) == 3
     @assert 1 <= dir <= 3
     return gradient(B,dir,x[1],x[2],x[3])
@@ -139,8 +132,6 @@ function gradient(B::TensorProductBasis{3},x::V) where {V<:AbstractVector}
     @assert length(x) == 3
     return gradient(B,x[1],x[2],x[3])
 end
-
-
 
 function hessian(B::TensorProductBasis{1},x)
     return hessian(B.basis,x)
@@ -171,11 +162,6 @@ end
 function hessian(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
     @assert length(x) == 2
     return hessian(B,x[1],x[2])
-end
-
-function number_of_1d_points(p::V) where {V<:AbstractVector}
-    @assert length(p) == 1
-    return 1
 end
 
 function number_of_1d_points(p::M) where {M<:AbstractMatrix}

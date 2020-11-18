@@ -1,5 +1,4 @@
 using Test
-using StaticArrays
 # using Revise
 using PolynomialBasis
 
@@ -15,34 +14,32 @@ function allequal(v1,v2,tol)
     return f && all([isapprox(v1[i],v2[i],atol=tol) for i = 1:np])
 end
 
-coeffs = MMatrix{1,1}([1.0])
+coeffs = reshape([1.0],1,1)
 b0 = PB.LagrangePolynomialBasis(0)
 b1 = PB.LagrangePolynomialBasis(1)
 tp1 = PB.TensorProductBasis(2,1)
 
-@test_throws MethodError PB.InterpolatingPolynomial(coeffs,b1)
+@test_throws AssertionError PB.InterpolatingPolynomial(coeffs,b1)
 ip = PB.InterpolatingPolynomial(coeffs,b0)
 
-@test typeof(ip) == PB.InterpolatingPolynomial{1,1,PB.LagrangePolynomialBasis{1},Float64}
+@test typeof(ip) == PB.InterpolatingPolynomial{1,PB.LagrangePolynomialBasis{1,typeof(1.0)},typeof(1.0)}
 @test allequal(ip.coeffs,coeffs)
 @test typeof(ip.basis) == typeof(b0)
 
 float_type = typeof(0.0)
 ip = PB.InterpolatingPolynomial(float_type,2,b1)
-@test typeof(ip) == PB.InterpolatingPolynomial{2,2,PB.LagrangePolynomialBasis{2},float_type}
-@test typeof(ip.coeffs) == MMatrix{2,2,float_type,4}
+@test typeof(ip) == PB.InterpolatingPolynomial{2,PB.LagrangePolynomialBasis{2,float_type},float_type}
 @test size(ip.coeffs) == (2,2)
 @test typeof(ip.basis) == typeof(b1)
 
 ip = PB.InterpolatingPolynomial(3,tp1)
 @test size(ip.coeffs) == (3,4)
-@test typeof(ip) == PB.InterpolatingPolynomial{3,4,PB.TensorProductBasis{2,PB.LagrangePolynomialBasis{2},4},float_type}
+@test typeof(ip) == PB.InterpolatingPolynomial{3,PB.TensorProductBasis{2,PB.LagrangePolynomialBasis{2,float_type},4,float_type},float_type}
 
 ip = PB.InterpolatingPolynomial(1,1,2;start=0.0)
 @test allequal(ip.basis(0.0),[1.0,0.0,0.0])
 @test allequal(ip.basis(0.5),[0.0,1.0,0.0])
 @test allequal(ip.basis(1.0),[0.0,0.0,1.0])
-@test typeof(ip) == PB.InterpolatingPolynomial{1,3,PB.TensorProductBasis{1,PB.LagrangePolynomialBasis{3},3},float_type}
 
 v = [1.0 2.0 3.0]
 PB.update!(ip,v)

@@ -1,6 +1,6 @@
 module PolynomialBasis
 
-using StaticArrays
+# using StaticArrays
 import DynamicPolynomials
 import StaticPolynomials
 
