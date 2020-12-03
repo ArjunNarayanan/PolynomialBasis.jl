@@ -7,11 +7,11 @@ PB = PolynomialBasis
 
 @polyvar x
 
-function allequal(v1,v2)
-    return all(v1 .≈ v2)
+function allequal(v1,v2,tol)
+    return allequal(v1,v2;tol=tol)
 end
 
-function allequal(v1,v2,tol)
+function allequal(v1,v2;tol=1e3eps())
     np = length(v1)
     f = length(v2) == np
     return f && all([isapprox(v1[i],v2[i],atol=tol) for i = 1:np])
