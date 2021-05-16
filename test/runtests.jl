@@ -4,6 +4,10 @@ using SafeTestsets
     include("test_lagrange_polynomials.jl")
 end
 
+@safetestset "Test Hermite Polynomial Construction" begin
+    include("test_hermite_polynomials.jl")
+end
+
 @safetestset "Test Lagrange Basis" begin
     include("test_lagrange_basis.jl")
 end
