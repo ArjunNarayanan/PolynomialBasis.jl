@@ -18,11 +18,15 @@ function allequal(v1,v2;tol=1e3eps())
 end
 
 basis = PB.CubicHermiteBasis()
-@test allequal(basis.left,-1.0)
-@test allequal(basis.right,1.0)
+@test allequal(basis.points,[-1.0,1.0])
 @test allequal(basis(-1.0),[1.0,0.,0.,0.])
 @test allequal(basis(1.0),[0.0,0.,1.,0.])
 @test allequal(PB.derivative(basis,-1.0),[0.,1.,0.,0.])
 @test allequal(PB.derivative(basis,1.0),[0.,0.,0.,1.])
 @test allequal(PB.gradient(basis,-1.0),[0.,1.,0.,0.])
 @test allequal(PB.gradient(basis,1.0),[0.,0.,0.,1.])
+
+hess = PB.hessian(basis,-1.0)
+@test allequal(hess,[-1.5,-2.0,1.5,-1.0])
+hess = PB.hessian(basis,1.0)
+@test allequal(hess,[1.5,1,-1.5,2])

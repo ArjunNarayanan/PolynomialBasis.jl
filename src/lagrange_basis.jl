@@ -62,6 +62,10 @@ function number_of_basis_functions(basis::T) where {T<:AbstractBasis{dim,NF}} wh
     return NF
 end
 
+function type_of_interpolation_points(basis::T) where {T<:AbstractBasis{dim,NF,R}} where {dim,NF,R}
+    return R
+end
+
 function derivative(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
     vals = SP.jacobian(B.funcs,[x])
     return vals

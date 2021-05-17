@@ -1,19 +1,18 @@
 struct CubicHermiteBasis{T} <: AbstractBasis{1,4,T}
     funcs::SP.PolynomialSystem{4,1}
-    left::T
-    right::T
+    points::Vector{T}
     function CubicHermiteBasis(
         funcs::Vector{DP.Polynomial{C,R}},
-        left::T,
-        right::T,
+        points::Vector{T}
     ) where {C,R,T}
 
         @assert length(funcs) == 4
-        @assert left < right
+        @assert length(points) == 2
+        @assert points[1] < points[2]
         @assert isapprox(funcs[1] + funcs[3],one(R))
 
         polysystem = SP.PolynomialSystem(funcs)
-        new{T}(polysystem,left,right)
+        new{T}(polysystem,points)
     end
 end
 
@@ -30,7 +29,7 @@ function CubicHermiteBasis(;start = -1.0, stop = 1.0)
 
     DP.@polyvar x
     funcs = hermite_polynomials(x,start,stop)
-    return CubicHermiteBasis(funcs,start,stop)
+    return CubicHermiteBasis(funcs,[start,stop])
 end
 
 function (B::CubicHermiteBasis{T})(x) where {T}
