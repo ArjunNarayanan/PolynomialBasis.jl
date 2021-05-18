@@ -1,6 +1,5 @@
 module PolynomialBasis
 
-# using StaticArrays
 using LinearAlgebra
 import DynamicPolynomials
 import StaticPolynomials
@@ -14,7 +13,7 @@ include("common_definitions.jl")
 include("lagrange_basis.jl")
 include("hermite_basis.jl")
 include("lagrange_tensor_product_basis.jl")
-# include("hermite_tensor_product_basis.jl")
+include("hermite_tensor_product_basis.jl")
 # include("interpolation.jl")
 
 export LagrangePolynomialBasis, TensorProductBasis, gradient, hessian,

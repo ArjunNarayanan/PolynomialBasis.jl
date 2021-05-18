@@ -28,20 +28,20 @@ testvals[13] = 1.0
 
 testvals = zeros(16,2)
 testvals[2,2] = 1.0
-testvals[5,1] = 1.0
+testvals[3,1] = 1.0
 @test allapprox(gradient(basis,-1,-1),testvals)
 
 fill!(testvals,0.0)
-testvals[4,2] = 1.0
+testvals[6,2] = 1.0
 testvals[7,1] = 1.0
 @test allapprox(gradient(basis,-1,1),testvals)
 
 fill!(testvals,0.0)
 testvals[10,2] = 1.0
-testvals[13,1] = 1.0
+testvals[11,1] = 1.0
 @test allapprox(gradient(basis,1,-1),testvals)
 
 fill!(testvals,0.0)
-testvals[12,2] = 1.0
+testvals[14,2] = 1.0
 testvals[15,1] = 1.0
 @test allapprox(gradient(basis,1,1),testvals)

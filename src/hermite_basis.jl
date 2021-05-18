@@ -24,6 +24,10 @@ function order(basis::CubicHermiteBasis{T}) where {T}
     return 3
 end
 
+function type_of_interpolation_points(B::CubicHermiteBasis{T}) where {T}
+    return T
+end
+
 function CubicHermiteBasis(;start = -1.0, stop = 1.0)
     @assert start < stop
 

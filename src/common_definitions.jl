@@ -12,8 +12,17 @@ end
 
 function gradient(
     basis::B,
+    dir,
     x::V,
-) where {B<:AbstractBasis{dim,NF},V<:AbstractVector} where {dim,NF}
-    @assert length(x) == dim
-    
+) where {B<:AbstractBasis{2,NF},V<:AbstractVector} where {NF}
+    @assert length(x) == 2
+    return gradient(B,dir,x[1],x[2])
+end
+
+function gradient(
+    basis::B,
+    x::V,
+) where {B<:AbstractBasis{2,NF},V<:AbstractVector} where {NF}
+    @assert length(x) == 2
+    return gradient(B,x[1],x[2])
 end
