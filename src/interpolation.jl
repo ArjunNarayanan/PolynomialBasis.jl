@@ -45,8 +45,8 @@ function InterpolatingPolynomial(
 end
 
 function Base.show(io::IO, poly::InterpolatingPolynomial{N,B,T}) where {N,B,T}
-    p = order(poly.basis)
-    dim = dimension(poly.basis)
+    p = order(poly)
+    dim = dimension(poly)
     NF = number_of_basis_functions(poly.basis)
     basistype = typeof(poly.basis)
     str = "InterpolatingPolynomial\n\tDimension  : $dim\n\t"*
@@ -59,6 +59,10 @@ end
 
 function dimension(poly::InterpolatingPolynomial)
     return dimension(poly.basis)
+end
+
+function order(poly::InterpolatingPolynomial)
+    return order(poly.basis)
 end
 
 function update!(P::InterpolatingPolynomial, coeffs)
