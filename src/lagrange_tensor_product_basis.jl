@@ -1,66 +1,64 @@
-struct TensorProductBasis{dim,B,NF,T} <: AbstractBasis{dim,NF,T}
-    basis::B
+struct LagrangeTensorProductBasis{dim,NF,NF1D,T} <: AbstractBasis{dim,NF}
+    basis::LagrangePolynomialBasis{NF1D,T}
     points::Matrix{T}
-    function TensorProductBasis(dim,basis1d::B) where {B<:AbstractBasis{1,N1D,T}} where {N1D,T}
+    function LagrangeTensorProductBasis(dim,order;start = -1.0,stop = 1.0)
         @assert 1 <= dim <= 3
-        NF = N1D^dim
+        basis1d = LagrangePolynomialBasis(order, start = start, stop = stop)
+        NF1D = number_of_basis_functions(basis1d)
+        NF = NF1D^dim
+        T = type_of_interpolation_points(basis1d)
         points = tensor_product_points(dim,basis1d.points')
-        new{dim,B,NF,T}(basis1d,points)
+        new{dim,NF,NF1D,T}(basis1d,points)
     end
 end
 
-function TensorProductBasis(dim,order; start = -1.0, stop = 1.0)
-    basis_1d = LagrangePolynomialBasis(order, start = start, stop = stop)
-    return TensorProductBasis(dim,basis_1d)
-end
-
-function Base.show(io::IO, basis::TensorProductBasis{dim,B,NF,T}) where {dim,B,NF,T}
+function Base.show(io::IO, basis::LagrangeTensorProductBasis{dim,NF,NF1D,T}) where {dim,NF,NF1D,T}
     p = order(basis)
-    str = "TensorProductBasis\n\tDimension  : $dim\n\tOrder      : $p\n\tNum. Funcs.: $NF"
+    str = "LagrangeTensorProductBasis\n\tDimension  : $dim\n\tOrder      : $p\n\tNum. Funcs.: $NF"
     print(io,str)
 end
 
-function order(basis::TensorProductBasis)
+function order(basis::LagrangeTensorProductBasis)
     return order(basis.basis)
 end
 
-function (B::TensorProductBasis{1})(x)
+function (B::LagrangeTensorProductBasis{1})(x)
     return B.basis(x)
 end
 
-function (B::TensorProductBasis{1})(x::V) where {V<:AbstractVector}
+function (B::LagrangeTensorProductBasis{1})(x::V) where {V<:AbstractVector}
     @assert length(x) == 1
     return B(x[1])
 end
 
-function (B::TensorProductBasis{2})(x,y)
+function (B::LagrangeTensorProductBasis{2})(x,y)
     return kron(B.basis(x),B.basis(y))
 end
 
-function (B::TensorProductBasis{2})(x::V) where {V<:AbstractVector}
+function (B::LagrangeTensorProductBasis{2})(x::V) where {V<:AbstractVector}
     @assert length(x) == 2
     return B(x[1],x[2])
 end
 
-function (B::TensorProductBasis{3})(x,y,z)
+function (B::LagrangeTensorProductBasis{3})(x,y,z)
     return kron(B.basis(x),B.basis(y),B.basis(z))
 end
 
-function (B::TensorProductBasis{3})(x::V) where {V<:AbstractVector}
+function (B::LagrangeTensorProductBasis{3})(x::V) where {V<:AbstractVector}
     @assert length(x) == 3
     return B(x[1],x[2],x[3])
 end
 
-function gradient(B::TensorProductBasis{1},x)
+function gradient(B::LagrangeTensorProductBasis{1},x)
     return derivative(B.basis,x)
 end
 
-function gradient(B::TensorProductBasis{1},x::V) where {V<:AbstractVector}
+function gradient(B::LagrangeTensorProductBasis{1},x::V) where {V<:AbstractVector}
     @assert length(x) == 1
     return gradient(B,x[1])
 end
 
-function gradient(B::TensorProductBasis{2},dir::Z,x,y) where {Z<:Integer}
+function gradient(B::LagrangeTensorProductBasis{2},dir::Z,x,y) where {Z<:Integer}
     @assert 1 <= dir <= 2
     if dir == 1
         dNx = derivative(B.basis,x)
@@ -73,24 +71,24 @@ function gradient(B::TensorProductBasis{2},dir::Z,x,y) where {Z<:Integer}
     end
 end
 
-function gradient(B::TensorProductBasis{2},x,y)
+function gradient(B::LagrangeTensorProductBasis{2},x,y)
     col1 = gradient(B,1,x,y)
     col2 = gradient(B,2,x,y)
     return hcat(col1,col2)
 end
 
-function gradient(B::TensorProductBasis{2},dir,x::V) where {V<:AbstractVector}
+function gradient(B::LagrangeTensorProductBasis{2},dir,x::V) where {V<:AbstractVector}
     @assert length(x) == 2
     @assert 1 <= dir <= 2
     return gradient(B,dir,x[1],x[2])
 end
 
-function gradient(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
+function gradient(B::LagrangeTensorProductBasis{2},x::V) where {V<:AbstractVector}
     @assert length(x) == 2
     return gradient(B,x[1],x[2])
 end
 
-function gradient(B::TensorProductBasis{3},dir,x,y,z)
+function gradient(B::LagrangeTensorProductBasis{3},dir,x,y,z)
     @assert 1 <= dir <= 3
     if dir == 1
         dNx = derivative(B.basis,x)
@@ -110,7 +108,7 @@ function gradient(B::TensorProductBasis{3},dir,x,y,z)
     end
 end
 
-function gradient(B::TensorProductBasis{3},x,y,z)
+function gradient(B::LagrangeTensorProductBasis{3},x,y,z)
     Nx = B.basis(x)
     Ny = B.basis(y)
     Nz = B.basis(z)
@@ -122,27 +120,27 @@ function gradient(B::TensorProductBasis{3},x,y,z)
     return hcat(kron(dNx,Ny,Nz),kron(Nx,dNy,Nz),kron(Nx,Ny,dNz))
 end
 
-function gradient(B::TensorProductBasis{3},dir,x::V) where {V<:AbstractVector}
+function gradient(B::LagrangeTensorProductBasis{3},dir,x::V) where {V<:AbstractVector}
     @assert length(x) == 3
     @assert 1 <= dir <= 3
     return gradient(B,dir,x[1],x[2],x[3])
 end
 
-function gradient(B::TensorProductBasis{3},x::V) where {V<:AbstractVector}
+function gradient(B::LagrangeTensorProductBasis{3},x::V) where {V<:AbstractVector}
     @assert length(x) == 3
     return gradient(B,x[1],x[2],x[3])
 end
 
-function hessian(B::TensorProductBasis{1},x)
+function hessian(B::LagrangeTensorProductBasis{1},x)
     return hessian(B.basis,x)
 end
 
-function hessian(B::TensorProductBasis{1},x::V) where {V<:AbstractVector}
+function hessian(B::LagrangeTensorProductBasis{1},x::V) where {V<:AbstractVector}
     @assert length(x) == 1
     return hessian(B,x[1])
 end
 
-function hessian(B::TensorProductBasis{2},x,y)
+function hessian(B::LagrangeTensorProductBasis{2},x,y)
 
     d2Nx = hessian(B.basis,x)
     d1Nx = derivative(B.basis,x)
@@ -159,7 +157,7 @@ function hessian(B::TensorProductBasis{2},x,y)
     return hcat(Nxx,Nxy,Nyy)
 end
 
-function hessian(B::TensorProductBasis{2},x::V) where {V<:AbstractVector}
+function hessian(B::LagrangeTensorProductBasis{2},x::V) where {V<:AbstractVector}
     @assert length(x) == 2
     return hessian(B,x[1],x[2])
 end

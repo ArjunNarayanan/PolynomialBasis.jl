@@ -1,6 +1,6 @@
 using Test
 import DynamicPolynomials: @polyvar
-# using Revise
+using Revise
 using PolynomialBasis
 
 PB = PolynomialBasis

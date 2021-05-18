@@ -1,4 +1,4 @@
-struct CubicHermiteBasis{T} <: AbstractBasis{1,4,T}
+struct CubicHermiteBasis{T} <: AbstractBasis{1,4}
     funcs::SP.PolynomialSystem{4,1}
     points::Vector{T}
     function CubicHermiteBasis(
@@ -17,7 +17,7 @@ struct CubicHermiteBasis{T} <: AbstractBasis{1,4,T}
 end
 
 function Base.show(io::IO,basis::CubicHermiteBasis{T}) where {T}
-    print(io,"1-D HermitePolynomialBasis")
+    print(io,"1-D CubicHermiteBasis")
 end
 
 function order(basis::CubicHermiteBasis{T}) where {T}

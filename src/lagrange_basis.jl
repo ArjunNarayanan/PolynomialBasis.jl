@@ -1,10 +1,7 @@
 import Base: ==
 
 
-abstract type AbstractBasis{dim,NF,T} end
-
-
-struct LagrangePolynomialBasis{NF,T} <: AbstractBasis{1,NF,T}
+struct LagrangePolynomialBasis{NF,T} <: AbstractBasis{1,NF}
     funcs::SP.PolynomialSystem{NF,1}
     points::Vector{T}
     function LagrangePolynomialBasis(funcs::Vector{DP.Polynomial{C,R}},
@@ -30,13 +27,13 @@ struct LagrangePolynomialBasis{NF,T} <: AbstractBasis{1,NF,T}
     end
 end
 
+function type_of_interpolation_points(B::LagrangePolynomialBasis{NF,T}) where {NF,T}
+    return T
+end
+
 function Base.show(io::IO,basis::LagrangePolynomialBasis{NF,T}) where {NF,T}
     p = order(basis)
     print(io, "1-D LagrangePolynomialBasis\n\tOrder: $p")
-end
-
-function dimension(basis::B) where {B<:AbstractBasis{D}} where {D}
-    return D
 end
 
 function order(basis::LagrangePolynomialBasis{NF,T}) where {NF,T}
@@ -56,14 +53,6 @@ end
 
 function (B::LagrangePolynomialBasis)(x)
     return SP.evaluate(B.funcs,[x])
-end
-
-function number_of_basis_functions(basis::T) where {T<:AbstractBasis{dim,NF}} where {dim,NF}
-    return NF
-end
-
-function type_of_interpolation_points(basis::T) where {T<:AbstractBasis{dim,NF,R}} where {dim,NF,R}
-    return R
 end
 
 function derivative(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
