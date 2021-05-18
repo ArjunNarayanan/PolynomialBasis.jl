@@ -1,6 +1,6 @@
 using Test
 using DynamicPolynomials
-using Revise
+# using Revise
 using PolynomialBasis
 PB = PolynomialBasis
 

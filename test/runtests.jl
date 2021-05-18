@@ -24,6 +24,10 @@ end
     include("test_hermite_tensor_product_basis.jl")
 end
 
-# @safetestset "Test Interpolation" begin
-#     include("test_interpolation.jl")
-# end
+@safetestset "Test Lagrange Interpolating Polynomial" begin
+    include("test_lagrange_interpolation.jl")
+end
+
+@safetestset "Test Hermite Interpolating Polynomial" begin
+    include("test_hermite_interpolation.jl")
+end
