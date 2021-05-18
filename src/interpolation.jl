@@ -57,6 +57,10 @@ function Base.show(io::IO, poly::InterpolatingPolynomial{N,B,T}) where {N,B,T}
     print(io, str)
 end
 
+function basis(poly::InterpolatingPolynomial)
+    return poly.basis
+end
+
 function dimension(poly::InterpolatingPolynomial)
     return dimension(poly.basis)
 end

@@ -22,7 +22,7 @@ end
 function hermite_tensor_product_interpolation_points(dim, start, stop)
     if dim == 2
         points = tensor_product_points(2, [start, stop]')
-        return repeat(points, inner = (1, 4))
+        return points
     else
         error("Current support for dim = $dim, got dim = $dim")
     end
