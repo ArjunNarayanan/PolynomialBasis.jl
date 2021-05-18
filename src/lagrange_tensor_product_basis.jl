@@ -1,9 +1,9 @@
 struct LagrangeTensorProductBasis{dim,NF,NF1D,T} <: AbstractBasis{dim,NF}
-    basis::LagrangePolynomialBasis{NF1D,T}
+    basis::LagrangeBasis{NF1D,T}
     points::Matrix{T}
     function LagrangeTensorProductBasis(dim,order;start = -1.0,stop = 1.0)
         @assert 1 <= dim <= 3
-        basis1d = LagrangePolynomialBasis(order, start = start, stop = stop)
+        basis1d = LagrangeBasis(order, start = start, stop = stop)
         NF1D = number_of_basis_functions(basis1d)
         NF = NF1D^dim
         T = type_of_interpolation_points(basis1d)

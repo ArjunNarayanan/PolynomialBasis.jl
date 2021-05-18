@@ -45,7 +45,7 @@ tp = PB.tensor_product_points(3,p')
 testtp = [1.0;1.0;1.0]
 @test allequal(tp,testtp)
 
-basis = PB.LagrangePolynomialBasis(0)
+basis = PB.LagrangeBasis(0)
 @test_throws AssertionError PB.LagrangeTensorProductBasis(0,0)
 @test_throws AssertionError PB.LagrangeTensorProductBasis(4,0)
 tpb = PB.LagrangeTensorProductBasis(1,0)

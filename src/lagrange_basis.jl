@@ -1,10 +1,10 @@
 import Base: ==
 
 
-struct LagrangePolynomialBasis{NF,T} <: AbstractBasis{1,NF}
+struct LagrangeBasis{NF,T} <: AbstractBasis{1,NF}
     funcs::SP.PolynomialSystem{NF,1}
     points::Vector{T}
-    function LagrangePolynomialBasis(funcs::Vector{DP.Polynomial{C,R}},
+    function LagrangeBasis(funcs::Vector{DP.Polynomial{C,R}},
         points::Vector{T}) where {C,R,T}
 
         NF = length(funcs)
@@ -27,20 +27,20 @@ struct LagrangePolynomialBasis{NF,T} <: AbstractBasis{1,NF}
     end
 end
 
-function type_of_interpolation_points(B::LagrangePolynomialBasis{NF,T}) where {NF,T}
+function type_of_interpolation_points(B::LagrangeBasis{NF,T}) where {NF,T}
     return T
 end
 
-function Base.show(io::IO,basis::LagrangePolynomialBasis{NF,T}) where {NF,T}
+function Base.show(io::IO,basis::LagrangeBasis{NF,T}) where {NF,T}
     p = order(basis)
-    print(io, "1-D LagrangePolynomialBasis\n\tOrder: $p")
+    print(io, "1-D LagrangeBasis\n\tOrder: $p")
 end
 
-function order(basis::LagrangePolynomialBasis{NF,T}) where {NF,T}
+function order(basis::LagrangeBasis{NF,T}) where {NF,T}
     return NF-1
 end
 
-function LagrangePolynomialBasis(order::Z;start = -1.0, stop = 1.0) where {Z<:Integer}
+function LagrangeBasis(order::Z;start = -1.0, stop = 1.0) where {Z<:Integer}
     @assert start < stop
     @assert order >= 0
 
@@ -48,23 +48,23 @@ function LagrangePolynomialBasis(order::Z;start = -1.0, stop = 1.0) where {Z<:In
     NF = order+1
     points = NF == 1 ? [0.5*(start+stop)] : Array(range(start,stop=stop,length=NF))
     funcs = lagrange_polynomials(x,points)
-    return LagrangePolynomialBasis(funcs,points)
+    return LagrangeBasis(funcs,points)
 end
 
-function (B::LagrangePolynomialBasis)(x)
+function (B::LagrangeBasis)(x)
     return SP.evaluate(B.funcs,[x])
 end
 
-function derivative(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
+function derivative(B::LagrangeBasis{NF,T},x) where {NF,T}
     vals = SP.jacobian(B.funcs,[x])
     return vals
 end
 
-function gradient(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
+function gradient(B::LagrangeBasis{NF,T},x) where {NF,T}
     return derivative(B,x)
 end
 
-function hessian(B::LagrangePolynomialBasis{NF,T},x) where {NF,T}
+function hessian(B::LagrangeBasis{NF,T},x) where {NF,T}
     h = zeros(NF,1,1)
     SP.hessian!(h,B.funcs,[x])
     return h[:,1,1]

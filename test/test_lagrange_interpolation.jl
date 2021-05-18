@@ -15,8 +15,8 @@ function allequal(v1, v2, tol)
 end
 
 coeffs = reshape([1.0], 1, 1)
-b0 = PB.LagrangePolynomialBasis(0)
-b1 = PB.LagrangePolynomialBasis(1)
+b0 = PB.LagrangeBasis(0)
+b1 = PB.LagrangeBasis(1)
 tp1 = PB.LagrangeTensorProductBasis(2, 1)
 
 @test_throws AssertionError PB.InterpolatingPolynomial(coeffs, b1)
