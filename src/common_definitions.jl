@@ -10,6 +10,10 @@ function number_of_basis_functions(
     return NF
 end
 
+function interpolation_points(basis::T) where {T<:AbstractBasis{dim,NF}} where {dim,NF}
+    return basis.points
+end
+
 function gradient(
     basis::B,
     dir,
