@@ -14,7 +14,7 @@ include("lagrange_basis.jl")
 include("hermite_basis.jl")
 include("lagrange_tensor_product_basis.jl")
 include("hermite_tensor_product_basis.jl")
-# include("interpolation.jl")
+include("interpolation.jl")
 
 export LagrangePolynomialBasis, TensorProductBasis, gradient, hessian,
         InterpolatingPolynomial, HermiteTensorProductBasis, update!

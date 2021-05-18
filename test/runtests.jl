@@ -20,6 +20,10 @@ end
     include("test_lagrange_tensor_product_basis.jl")
 end
 
+@safetestset "Test Hermite Tensor Product Basis" begin
+    include("test_hermite_tensor_product_basis.jl")
+end
+
 # @safetestset "Test Interpolation" begin
 #     include("test_interpolation.jl")
 # end

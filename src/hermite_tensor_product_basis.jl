@@ -15,6 +15,10 @@ function Base.show(io::IO, basis::HermiteTensorProductBasis{dim,NF,T}) where {di
     print(io,str)
 end
 
+function order(B::HermiteTensorProductBasis{dim,NF,T}) where {dim,NF,T}
+    return order(B.basis)
+end
+
 function hermite_tensor_product_interpolation_points(dim, start, stop)
     if dim == 2
         points = tensor_product_points(2, [start, stop]')
