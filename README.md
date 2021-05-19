@@ -1,6 +1,4 @@
 # PolynomialBasis
 
-[![Build Status](https://travis-ci.com/ArjunNarayanan/PolynomialBasis.jl.svg?branch=master)](https://travis-ci.com/ArjunNarayanan/PolynomialBasis.jl)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/ArjunNarayanan/PolynomialBasis.jl?svg=true)](https://ci.appveyor.com/project/ArjunNarayanan/PolynomialBasis-jl)
-[![Codecov](https://codecov.io/gh/ArjunNarayanan/PolynomialBasis.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/ArjunNarayanan/PolynomialBasis.jl)
-[![Coveralls](https://coveralls.io/repos/github/ArjunNarayanan/PolynomialBasis.jl/badge.svg?branch=master)](https://coveralls.io/github/ArjunNarayanan/PolynomialBasis.jl?branch=master)
+[![CI](https://github.com/ArjunNarayanan/PolynomialBasis.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/ArjunNarayanan/PolynomialBasis.jl/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ArjunNarayanan/PolynomialBasis.jl/branch/master/graph/badge.svg?token=OBisgD0zgZ)](https://codecov.io/gh/ArjunNarayanan/PolynomialBasis.jl)
