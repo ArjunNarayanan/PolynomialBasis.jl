@@ -57,7 +57,7 @@ end
 
 function (B::HermiteTensorProductBasis{2})(x::V) where {V<:AbstractVector}
     @assert length(x) == 2
-    return B([x[1],x[2]])
+    return B(x[1],x[2])
 end
 
 function gradient(B::HermiteTensorProductBasis{2},dir::Z,x,y) where {Z<:Integer}

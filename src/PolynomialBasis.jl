@@ -18,6 +18,7 @@ include("interpolation.jl")
 
 export LagrangeBasis, CubicHermiteBasis, LagrangeTensorProductBasis,
         HermiteTensorProductBasis, gradient, hessian,
-        InterpolatingPolynomial, update!, interpolation_points, basis
+        InterpolatingPolynomial, update!, interpolation_points, basis,
+        number_of_basis_functions
 
 end # module
