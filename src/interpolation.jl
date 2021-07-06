@@ -49,11 +49,12 @@ function Base.show(io::IO, poly::InterpolatingPolynomial{N,B,T}) where {N,B,T}
     dim = dimension(poly)
     NF = number_of_basis_functions(poly.basis)
     basistype = typeof(poly.basis)
-    str = "InterpolatingPolynomial\n\tDimension  : $dim\n\t"*
-          "Basis Type : $basistype\n\t"*
-          "Order      : $p\n\t"*
-          "Num. Funcs.: $NF\n\t"*
-          "DOFs/Func. : $N"
+    str =
+        "InterpolatingPolynomial\n\tDimension  : $dim\n\t" *
+        "Basis Type : $basistype\n\t" *
+        "Order      : $p\n\t" *
+        "Num. Funcs.: $NF\n\t" *
+        "DOFs/Func. : $N"
     print(io, str)
 end
 
@@ -73,6 +74,20 @@ function update!(P::InterpolatingPolynomial, coeffs)
     P.coeffs[:] = coeffs[:]
 end
 
+################################################################################
+function (P::InterpolatingPolynomial{1,B,T})(x) where {B<:AbstractBasis{1},T}
+    return ((P.coeffs)*(P.basis(x)))[1]
+end
+
+function (P::InterpolatingPolynomial{1,B,T})(
+    x::V,
+) where {B<:AbstractBasis{1},T} where {V<:AbstractVector}
+    return P(x[1])
+end
+################################################################################
+
+
+################################################################################
 function (P::InterpolatingPolynomial{1,B,T})(x, y) where {B<:AbstractBasis{2},T}
     return ((P.coeffs)*(P.basis(x, y)))[1]
 end
@@ -97,6 +112,7 @@ function (P::InterpolatingPolynomial{N,B,T})(
     @assert length(x) == 2
     return ((P.coeffs) * (P.basis(x[1], x[2])))
 end
+################################################################################
 
 function gradient(
     P::InterpolatingPolynomial{1,B,T},
